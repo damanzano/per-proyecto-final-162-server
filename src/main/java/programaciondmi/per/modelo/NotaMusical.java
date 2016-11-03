@@ -3,6 +3,10 @@ package programaciondmi.per.modelo;
 import java.io.Serializable;
 
 public class NotaMusical implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private Instrumento instrumento;
 	private int nota;
 	private double duracion;
@@ -44,6 +48,11 @@ public class NotaMusical implements Serializable {
 	public void setDuracion(double duracion) {
 		this.duracion = duracion;
 	}
-	
+
+
+	@Override
+	public String toString() {
+		return "NotaMusical [instrumento=" + instrumento + ", nota=" + nota + ", duracion=" + duracion + "]";
+	}
 	
 }

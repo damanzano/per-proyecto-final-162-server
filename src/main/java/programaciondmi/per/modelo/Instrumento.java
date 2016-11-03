@@ -33,4 +33,9 @@ public class Instrumento implements Serializable {
 		this.descripcion = descripcion;
 	}
 
+	@Override
+	public String toString() {
+		return "Instrumento [tipo=" + tipo + ", descripcion=" + descripcion + "]";
+	}
+
 }
