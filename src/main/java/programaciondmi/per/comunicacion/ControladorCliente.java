@@ -3,33 +3,38 @@ package programaciondmi.per.comunicacion;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.Observable;
 
 import programaciondmi.per.modelo.Instrumento;
+import programaciondmi.per.modelo.NotaMusical;
 
 public class ControladorCliente extends Observable implements Runnable {
-	
+
 	private int id;
 	private Instrumento instrumento;
 	private Socket socketCliente;
 	private boolean conectado;
-	
-	public ControladorCliente(Socket socketCliente, int id, Instrumento instrumento){
+
+	public ControladorCliente(Socket socketCliente, int id, Instrumento instrumento) {
 		this.socketCliente = socketCliente;
-		this.id =  id;
+		this.id = id;
 		this.instrumento = instrumento;
 		conectado = true;
 	}
 
 	public void run() {
-		System.out.println("[ControladorCliente "+id+"] Enviando instrumento asignado");
-		enviar("Instrumento");
-		
-		System.out.println("[ControladorCliente "+id+"] Esperando mensajes");
+		System.out.println("[ControladorCliente " + id + "] Enviando instrumento asignado");
+		// enviar("Instrumento");
+		enviarObjeto(instrumento);
+
+		System.out.println("[ControladorCliente " + id + "] Esperando mensajes");
 		while (conectado) {
-			recibir();
+			// recibir();
+			recibirObjeto();
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
@@ -38,28 +43,60 @@ public class ControladorCliente extends Observable implements Runnable {
 		}
 
 	}
-	
+
 	private void recibir() {
 		DataInputStream entrada = null;
 		try {
 			entrada = new DataInputStream(socketCliente.getInputStream());
 			int val = entrada.readInt();
-			System.out.println("recibido: " + val +" del cliente "+id);
-		} catch (SocketException e) {			
-			System.err.println("Se perdió la conexión con el cliente");
+			System.out.println("[ControladorCliente " + id + "] recibido: " + val + " del cliente");
+		} catch (IOException e) {
+			System.err.println("[ControladorCliente " + id + "] Se perdió la conexión con el cliente");
 			try {
-				entrada.close();
+				if (entrada != null) {
+					entrada.close();
+				}
 				socketCliente.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
-			}			
+			}
 			socketCliente = null;
 			conectado = false;
 			setChanged();
 			notifyObservers("cliente desconectado");
-		} catch (IOException e) {			
 			e.printStackTrace();
-		}		
+		}
+	}
+
+	private void recibirObjeto() {
+		ObjectInputStream entrada = null;
+		try {
+			entrada = new ObjectInputStream(socketCliente.getInputStream());
+			Object mensaje = entrada.readObject();
+			System.out.println("[ControladorCliente " + id + "] Se recibio: " + mensaje + " del cliente " + id);
+
+			setChanged();
+			notifyObservers(mensaje);
+
+		} catch (IOException e) {
+			System.err.println("[ControladorCliente " + id + "] Se perdió la conexión con el cliente");
+			try {
+				if (entrada != null) {
+					entrada.close();
+				}
+				socketCliente.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			socketCliente = null;
+			conectado = false;
+			setChanged();
+			notifyObservers("cliente desconectado");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void enviar(String mensaje) {
@@ -67,21 +104,46 @@ public class ControladorCliente extends Observable implements Runnable {
 		try {
 			salida = new DataOutputStream(socketCliente.getOutputStream());
 			salida.writeUTF(mensaje);
-			System.out.println("Se envió el mensaje: " + mensaje);
-		} catch (SocketException e) {			
-			System.err.println("Se perdió la conexión con el cliente");
+			System.out.println("[ControladorCliente " + id + "] Se envió el mensaje: " + mensaje);
+		} catch (IOException e) {
+			System.err.println("[ControladorCliente " + id + "] Se perdió la conexión con el cliente");
 			try {
-				salida.close();
+				if (salida != null) {
+					salida.close();
+				}
+				
 				socketCliente.close();
 			} catch (IOException e1) {
 				e1.printStackTrace();
-			}			
+			}
 			socketCliente = null;
 			conectado = false;
 			setChanged();
 			notifyObservers("cliente desconectado");
-		} catch (IOException e) {			
-			e.printStackTrace();
+		}
+	}
+
+	public void enviarObjeto(Object o) {
+		ObjectOutputStream salida = null;
+
+		try {
+			salida = new ObjectOutputStream(socketCliente.getOutputStream());
+			salida.writeObject(o);
+			System.out.println("[ControladorCliente " + id + "] Se envió el mensaje: " + o);
+		} catch (IOException e) {
+			System.err.println("[ControladorCliente " + id + "] Se perdió la conexión con el cliente");
+			try {
+				if (salida != null) {
+					salida.close();
+				}
+				socketCliente.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+			socketCliente = null;
+			conectado = false;
+			setChanged();
+			notifyObservers("cliente desconectado");
 		}
 	}
 
