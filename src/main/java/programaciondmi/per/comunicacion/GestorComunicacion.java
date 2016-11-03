@@ -14,6 +14,7 @@ import java.util.Observer;
 
 import programaciondmi.per.modelo.Instrumento;
 import programaciondmi.per.modelo.NotaMusical;
+import programaciondmi.per.modelo.exceptions.TipoInstrumentoException;
 import programaciondmi.per.util.Permutaciones;
 
 public class GestorComunicacion implements Observer, Runnable {
@@ -110,7 +111,12 @@ public class GestorComunicacion implements Observer, Runnable {
 		// Llenar la lista de instrmentos deacuerdo a la secuencia seleccionada
 		for (Iterator<Integer> iterator = permutaciones.get(random).iterator(); iterator.hasNext();) {
 			Integer codigoInst = (Integer) iterator.next();
-			instrumentos.addLast(new Instrumento(codigoInst));
+			try{
+				instrumentos.addLast(new Instrumento(codigoInst));
+			}catch(TipoInstrumentoException e){
+				e.printStackTrace();
+			}
+			
 		}
 
 		return instrumentos;
