@@ -2,12 +2,17 @@ package programaciondmi.per.util;
 
 import java.util.ArrayList;
 
+/**
+ * Clase de utilidad para generar secuencias aleatorias
+ * @author damanzano
+ *
+ */
 public class Permutaciones {
 
 	/**
-	 * Return all possible permutations for a list of numbers
+	 * Genera todas las posibles permutaciones para una lista de números enteros
 	 * 
-	 * @param num
+	 * @param num Arreglo con los número a incluir en las secuencias
 	 * @return
 	 */
 	public static ArrayList<ArrayList<Integer>> permute(int[] num) {

@@ -1,5 +1,11 @@
 package programaciondmi.per.modelo.exceptions;
 
+/**
+ * Este excepción se lanza cuando se intenta crear una nota musical y no se pasan los
+ * parámetros adecuados.
+ * @author damanzano
+ *
+ */
 public class MalaNotaMusicalException extends Exception {
 
 	/**

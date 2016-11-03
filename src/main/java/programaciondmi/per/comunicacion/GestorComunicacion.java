@@ -17,14 +17,47 @@ import programaciondmi.per.modelo.NotaMusical;
 import programaciondmi.per.modelo.exceptions.TipoInstrumentoException;
 import programaciondmi.per.util.Permutaciones;
 
+/**
+ * Esta clase se encarga de lenvantar un ServerSocket para escuchar solicitudes de los clientes
+ * @author damanzano
+ *
+ */
 public class GestorComunicacion implements Observer, Runnable {
+	
+	/**
+	 * Puerto utilizado en caso de que se pasa un parámetro inválido
+	 */
 	private final int PUERTO_PREDETERMINADO = 5000;
+	
+	/**
+	 * Socket a través del cual se aceptan las solicitudes
+	 */
 	private ServerSocket socketServidor;
+	
+	/**
+	 * Indica si es servidor se encuentra activo o no
+	 */
 	private boolean conectado;
+	
+	/**
+	 * Listado de agentes atendiendo a clientes conectados
+	 */
 	private ArrayList<ControladorCliente> clientes;
+	
+	/**
+	 * Secuencia en la que se asignaran los instrmuentos a los clientes
+	 */
 	private LinkedList<Instrumento> secuenciaInstrmentos;
+	
+	/**
+	 * Puerto usado en la comunicación
+	 */
 	private int puerto;
 
+	/**
+	 * Construnctor
+	 * @param puerto Debe ser un entero positivo mayor a 1024  y menor que limite de puertos
+	 */
 	public GestorComunicacion(int puerto) {
 		// Definir un puerto valido
 		this.puerto = (puerto > 1024) ? puerto : PUERTO_PREDETERMINADO;
@@ -45,7 +78,10 @@ public class GestorComunicacion implements Observer, Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Hilo de ejecución en background
+	 */
 	public void run() {
 		while (conectado) {
 			try {
@@ -92,8 +128,7 @@ public class GestorComunicacion implements Observer, Runnable {
 
 	/**
 	 * Genera una lista de instrumentos en una secuencia aleatoria
-	 * 
-	 * @return
+	 * @return LinkedList<Instrumento>
 	 */
 	private LinkedList<Instrumento> crearPermutacionInstrmentos() {
 		// Define la lista a retornar.

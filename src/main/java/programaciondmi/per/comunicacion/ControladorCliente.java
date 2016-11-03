@@ -12,23 +12,52 @@ import java.util.Observable;
 import programaciondmi.per.modelo.Instrumento;
 import programaciondmi.per.modelo.NotaMusical;
 
+/**
+ * Esta clase se encarga de controlar todos los aspectos de comunicación
+ * con un cliente que haya sido aceptado por el servidor
+ * @author damanzano
+ *
+ */
 public class ControladorCliente extends Observable implements Runnable {
-
+	
+	/**
+	 * Identificador del controlador
+	 */
 	private int id;
+	
+	/**
+	 * Instrumento asignado al cliente que es atendido por este controlador
+	 */
 	private Instrumento instrumento;
+	
+	/**
+	 * Socket a través del cual se realiza la comunicación con el cliente
+	 */
 	private Socket socketCliente;
+	
+	/**
+	 * Indica si el controlador está o no conectado con el cliente
+	 */
 	private boolean conectado;
-
+	
+	/**
+	 * Crea un nuevo ControladorCliente con los parámetros especificados.
+	 * @param socketCliente Socket a través del cual se realiza la comunicación con el cliente
+	 * @param id Identificador del controlador
+	 * @param instrumento Instrumento asignado al cliente que es atendido por este controlador
+	 */
 	public ControladorCliente(Socket socketCliente, int id, Instrumento instrumento) {
 		this.socketCliente = socketCliente;
 		this.id = id;
 		this.instrumento = instrumento;
 		conectado = true;
 	}
-
+	
+	/**
+	 * Hilo de ejecución en background
+	 */
 	public void run() {
 		System.out.println("[ControladorCliente " + id + "] Enviando instrumento asignado");
-		// enviar("Instrumento");
 		enviarObjeto(instrumento);
 
 		System.out.println("[ControladorCliente " + id + "] Esperando mensajes");
@@ -43,31 +72,10 @@ public class ControladorCliente extends Observable implements Runnable {
 		}
 
 	}
-
-	private void recibir() {
-		DataInputStream entrada = null;
-		try {
-			entrada = new DataInputStream(socketCliente.getInputStream());
-			int val = entrada.readInt();
-			System.out.println("[ControladorCliente " + id + "] recibido: " + val + " del cliente");
-		} catch (IOException e) {
-			System.err.println("[ControladorCliente " + id + "] Se perdió la conexión con el cliente");
-			try {
-				if (entrada != null) {
-					entrada.close();
-				}
-				socketCliente.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-			socketCliente = null;
-			conectado = false;
-			setChanged();
-			notifyObservers("cliente desconectado");
-			e.printStackTrace();
-		}
-	}
-
+	
+	/**
+	 * Método que se encarga de recibir objetos enviador por el cliente y procesarlos
+	 */
 	private void recibirObjeto() {
 		ObjectInputStream entrada = null;
 		try {
@@ -98,7 +106,11 @@ public class ControladorCliente extends Observable implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	
+	/**
+	 * Metodo para enviar un mensaje en formato string a l cliente
+	 * @param mensaje
+	 */
 	public void enviar(String mensaje) {
 		DataOutputStream salida = null;
 		try {
@@ -122,7 +134,12 @@ public class ControladorCliente extends Observable implements Runnable {
 			notifyObservers("cliente desconectado");
 		}
 	}
-
+	
+	/**
+	 * Método que se encarga de enviar un objeto al cliente.
+	 * el servidor puede enviar dos tipos de mensajes Instrumento o NotaMusical
+	 * @param mensaje
+	 */
 	public void enviarObjeto(Object o) {
 		ObjectOutputStream salida = null;
 

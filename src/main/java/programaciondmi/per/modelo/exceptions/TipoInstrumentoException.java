@@ -1,5 +1,11 @@
 package programaciondmi.per.modelo.exceptions;
 
+/**
+ * Este excepción se lanza cuando se intenta crear un instrumentoy no se pasan los
+ * parámetros adecuados.
+ * @author damanzano
+ *
+ */
 public class TipoInstrumentoException extends Exception {
 
 	/**

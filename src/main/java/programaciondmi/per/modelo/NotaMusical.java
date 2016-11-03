@@ -27,15 +27,34 @@ public class NotaMusical implements Serializable {
 	public static final double FUSA = 1 / 8;
 	public static final double SEMIFUSA = 1 / 16;
 
+	/**
+	 * El instrumento que genera la nota
+	 */
 	private Instrumento instrumento;
+
+	/**
+	 * La nota musical en si misma
+	 */
 	private int nota;
+
+	/**
+	 * La duración relativa de la nota (debe ser un valor entre 0 y 4)
+	 */
 	private double duracion;
 
 	/**
+	 * Construye una nueva NotaMusical con los parametros entregados
 	 * 
 	 * @param instrumento
+	 *            El instrumento que genera la nota.
 	 * @param nota
+	 *            La nota musical en si misma. Ver constantes estáticas para la
+	 *            nota.
 	 * @param duracion
+	 *            La duración relativa de la nota (debe ser un valor entre 0 y
+	 *            4), se suguiere utilizar una de las constantes estáticas para
+	 *            la duración.
+	 * @throws MalaNotaMusicalException
 	 */
 	public NotaMusical(Instrumento instrumento, int nota, double duracion) throws MalaNotaMusicalException {
 		this.instrumento = instrumento;
@@ -48,20 +67,37 @@ public class NotaMusical implements Serializable {
 		}
 
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public Instrumento getInstrumento() {
 		return instrumento;
 	}
-
+	
+	/**
+	 * 
+	 * @param instrumento
+	 */
 	public void setInstrumento(Instrumento instrumento) {
 		this.instrumento = instrumento;
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public int getNota() {
 		return nota;
 	}
-
-	public void setNota(int nota) throws MalaNotaMusicalException{
+	
+	/**
+	 * 
+	 * @param nota
+	 * @throws MalaNotaMusicalException
+	 */
+	public void setNota(int nota) throws MalaNotaMusicalException {
 		if (nota == DO || nota == RE || nota == MI || nota == FA || nota == SOL || nota == LA || nota == SI) {
 			this.nota = nota;
 		} else {
@@ -69,11 +105,19 @@ public class NotaMusical implements Serializable {
 					"Tipo de nota invalido, use una de las constantes definidas en la clase NotaMusical: DO, RE, MI FA, SOL, LA, SI");
 		}
 	}
-
+	
+	/**
+	 * 
+	 * @return
+	 */
 	public double getDuracion() {
 		return duracion;
 	}
-
+	
+	/**
+	 * 
+	 * @param duracion
+	 */
 	public void setDuracion(double duracion) {
 		this.duracion = duracion;
 	}
